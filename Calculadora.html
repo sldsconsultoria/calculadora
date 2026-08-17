@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ficha de Produção — Calculadora de Batelada</title>
+
+<!-- PWA / Instalar no celular -->
+<meta name="theme-color" content="#0a0f14">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Ficha Produção">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%230a0f14'/%3E%3Ctext x='50' y='62' font-size='46' text-anchor='middle' fill='%23ffb020' font-family='Arial'%3E%F0%9F%A7%AA%3C/text%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%230a0f14'/%3E%3Ctext x='50' y='62' font-size='46' text-anchor='middle' fill='%23ffb020' font-family='Arial'%3E%F0%9F%A7%AA%3C/text%3E%3C/svg%3E">
+<link rel="manifest" href='data:application/manifest+json,{"name":"Calculadora%20de%20Produ%C3%A7%C3%A3o","short_name":"Ficha%20Produ%C3%A7%C3%A3o","start_url":".","display":"standalone","background_color":"%230a0f14","theme_color":"%230a0f14","icons":[]}'>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0a0f14;
+    --bg-grid: rgba(255,255,255,0.035);
+    --panel:#111820;
+    --panel-2:#0d131a;
+    --line:#20303c;
+    --line-soft:#182129;
+    --amber:#ffb020;
+    --amber-dim: rgba(255,176,32,0.14);
+    --teal:#2fd6b6;
+    --teal-dim: rgba(47,214,182,0.14);
+    --text:#e9eef3;
+    --muted:#7d8fa0;
+    --muted-2:#546575;
+    --danger:#ff6b5e;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0; padding:0;}
+  html{-webkit-text-size-adjust:100%;}
+  body{
+    background:
+      linear-gradient(var(--bg-grid) 1px, transparent 1px) 0 0/100% 28px,
+      linear-gradient(90deg, var(--bg-grid) 1px, transparent 1px) 0 0/28px 100%,
+      var(--bg);
+    color:var(--text);
+    font-family:'Inter', Arial, sans-serif;
+    min-height:100vh;
+    padding:32px 18px 60px;
+    display:flex;
+    justify-content:center;
+    overflow-x:hidden;
+    width:100%;
+  }
+  .wrap{width:100%; max-width:760px; min-width:0;}
+  img, svg{max-width:100%;}
+
+  /* ---------- HEADER / BATCH TICKET ---------- */
+  .ticket{
+    position:relative;
+    border:1px dashed var(--line);
+    border-radius:14px;
+    padding:22px 24px;
+    margin-bottom:22px;
+    background:linear-gradient(160deg, rgba(255,176,32,0.05), transparent 60%), var(--panel);
+    overflow:hidden;
+  }
+  .ticket::before{
+    content:"";
+    position:absolute; top:0; right:0; bottom:0; width:120px;
+    background:repeating-linear-gradient(-45deg, rgba(255,255,255,0.02) 0 10px, transparent 10px 20px);
+    pointer-events:none;
+  }
+  .eyebrow{
+    font-family:'JetBrains Mono', monospace;
+    font-size:.68rem; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--amber); font-weight:600; display:flex; align-items:center; gap:8px;
+  }
+  .eyebrow .dot{width:6px; height:6px; border-radius:50%; background:var(--amber); box-shadow:0 0 10px var(--amber); animation:pulse 2.2s infinite;}
+  @keyframes pulse{0%,100%{opacity:1;} 50%{opacity:.35;}}
+  h1{
+    font-family:'Space Grotesk', sans-serif;
+    font-size:1.65rem; font-weight:700; margin:8px 0 4px; letter-spacing:-.01em;
+  }
+  p.sub{color:var(--muted); margin:0; font-size:.88rem; max-width:46ch; line-height:1.5;}
+
+  /* ---------- CONTROL PANEL ---------- */
+  .panel{
+    background:var(--panel); border:1px solid var(--line-soft); border-radius:14px;
+    padding:20px; margin-bottom:20px;
+  }
+  .field-row{display:grid; grid-template-columns:1fr 1fr; gap:14px;}
+  @media (max-width:560px){.field-row{grid-template-columns:1fr;}}
+  label{
+    display:flex; align-items:center; gap:6px;
+    font-family:'JetBrains Mono', monospace;
+    font-size:.68rem; letter-spacing:.08em; text-transform:uppercase; color:var(--muted);
+    font-weight:600; margin-bottom:8px;
+  }
+  .select-wrap{position:relative;}
+  select, input{
+    width:100%; padding:12px 14px; border-radius:9px; border:1px solid var(--line);
+    background:var(--panel-2); color:var(--text); font-size:16px; font-family:'Inter',sans-serif;
+    appearance:none; transition:border-color .15s, box-shadow .15s;
+  }
+  select{cursor:pointer; padding-right:34px;}
+  .select-wrap::after{
+    content:"⌄"; position:absolute; right:14px; top:50%; transform:translateY(-55%);
+    color:var(--muted); pointer-events:none; font-size:1rem;
+  }
+  select:focus, input:focus{outline:none; border-color:var(--amber); box-shadow:0 0 0 3px var(--amber-dim);}
+  input::placeholder{color:var(--muted-2);}
+
+  /* ---------- RESULT AREA ---------- */
+  #resultado{display:flex; flex-direction:column; gap:18px;}
+  .empty{
+    border:1px solid var(--line-soft); border-radius:14px; padding:40px 20px; text-align:center;
+    color:var(--muted); font-size:.9rem; background:var(--panel);
+  }
+
+  .sheet-head{
+    display:flex; align-items:baseline; justify-content:space-between; gap:12px; flex-wrap:wrap;
+    padding-bottom:12px; border-bottom:1px solid var(--line-soft); margin-bottom:14px;
+  }
+  .sheet-head h2{
+    font-family:'Space Grotesk', sans-serif; font-size:1.1rem; margin:0; font-weight:600;
+  }
+  .lote{
+    font-family:'JetBrains Mono', monospace; font-size:.72rem; color:var(--amber);
+    background:var(--amber-dim); padding:3px 9px; border-radius:6px; white-space:nowrap;
+  }
+
+  .card{
+    background:var(--panel); border:1px solid var(--line-soft); border-radius:14px; padding:20px;
+    animation:rise .35s ease both;
+  }
+  @keyframes rise{from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);}}
+
+  /* composition bars */
+  .comp-row{margin-bottom:14px;}
+  .comp-row:last-child{margin-bottom:0;}
+  .comp-top{display:flex; justify-content:space-between; align-items:baseline; gap:10px; margin-bottom:6px; flex-wrap:wrap;}
+  .comp-name{font-size:.86rem; font-weight:500; word-break:break-word;}
+  .comp-fn{font-family:'JetBrains Mono', monospace; font-size:.66rem; color:var(--muted); text-transform:uppercase; letter-spacing:.04em;}
+  .comp-vals{
+    font-family:'JetBrains Mono', monospace; font-size:.82rem; white-space:nowrap; text-align:right;
+    margin-left:auto;
+  }
+  .comp-vals b{color:var(--text); font-weight:600;}
+  .comp-vals span{color:var(--muted); font-size:.72rem;}
+  .bar-track{height:8px; border-radius:5px; background:var(--panel-2); border:1px solid var(--line-soft); overflow:hidden;}
+  .bar-fill{
+    height:100%; border-radius:5px;
+    background:linear-gradient(90deg, var(--amber), #ffd27a);
+    width:0%; transition:width .6s cubic-bezier(.16,1,.3,1);
+  }
+  .bar-fill.veiculo{background:linear-gradient(90deg, var(--teal), #8ff3e0);}
+
+  .total-line{
+    display:flex; justify-content:space-between; align-items:center;
+    margin-top:16px; padding-top:14px; border-top:1px dashed var(--line);
+    font-family:'JetBrains Mono', monospace;
+  }
+  .total-line .lbl{font-size:.72rem; letter-spacing:.1em; text-transform:uppercase; color:var(--muted);}
+  .total-line .val{font-size:1.15rem; font-weight:600; color:var(--amber);}
+  .base-note{font-size:.74rem; color:var(--muted-2); margin-top:8px;}
+
+  .btn-whatsapp{
+    display:flex; align-items:center; justify-content:center; gap:9px;
+    width:100%; margin-top:16px; padding:12px 16px; border:none; border-radius:10px;
+    background:#25D366; color:#06210f; font-family:'Inter',sans-serif; font-weight:600; font-size:.9rem;
+    cursor:pointer; transition:transform .12s ease, box-shadow .12s ease, background .12s ease;
+    box-shadow:0 4px 14px rgba(37,211,102,0.18);
+  }
+  .btn-whatsapp:hover{background:#2fe075; transform:translateY(-1px); box-shadow:0 6px 18px rgba(37,211,102,0.28);}
+  .btn-whatsapp:active{transform:translateY(0); box-shadow:0 2px 8px rgba(37,211,102,0.18);}
+  .btn-whatsapp svg{flex-shrink:0;}
+
+  /* physico grid */
+  .fisico-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:12px;}
+  @media (max-width:480px){.fisico-grid{grid-template-columns:1fr 1fr;}}
+  .fisico-item{
+    background:var(--panel-2); border:1px solid var(--line-soft); border-radius:10px; padding:11px 12px;
+  }
+  .fisico-label{
+    display:block; font-family:'JetBrains Mono', monospace; font-size:.62rem; letter-spacing:.08em;
+    text-transform:uppercase; color:var(--teal); margin-bottom:4px;
+  }
+  .fisico-val{font-size:.86rem; color:var(--text);}
+
+  .card h3{
+    font-family:'Space Grotesk', sans-serif; font-size:.95rem; margin:0 0 14px; font-weight:600;
+    display:flex; align-items:center; gap:8px;
+  }
+  .card h3 .icon-chip{
+    width:26px; height:26px; border-radius:7px; display:flex; align-items:center; justify-content:center;
+    background:var(--amber-dim); font-size:.85rem; flex-shrink:0;
+  }
+  .card.teal h3 .icon-chip{background:var(--teal-dim);}
+  .card p.body{margin:0; font-size:.87rem; line-height:1.6; color:#c7d2db;}
+
+  .grid-2{display:grid; grid-template-columns:1fr 1fr; gap:14px;}
+  @media (max-width:560px){.grid-2{grid-template-columns:1fr;}}
+
+  .btn-install{
+    position:absolute; top:16px; right:16px; z-index:2;
+    display:flex; align-items:center; gap:6px;
+    background:var(--amber-dim); border:1px solid rgba(255,176,32,0.35); color:var(--amber);
+    font-family:'JetBrains Mono', monospace; font-size:.68rem; font-weight:600; letter-spacing:.03em;
+    padding:7px 11px; border-radius:8px; cursor:pointer; transition:background .15s, transform .12s;
+  }
+  .btn-install:hover{background:rgba(255,176,32,0.24); transform:translateY(-1px);}
+  .btn-install svg{flex-shrink:0;}
+  @media (max-width:480px){
+    .btn-install{position:static; margin-bottom:12px; width:fit-content;}
+  }
+
+  .modal-overlay{
+    display:none; position:fixed; inset:0; background:rgba(4,7,10,0.72); backdrop-filter:blur(3px);
+    align-items:center; justify-content:center; z-index:50; padding:20px;
+  }
+  .modal-overlay.show{display:flex;}
+  .modal-box{
+    background:var(--panel); border:1px solid var(--line-soft); border-radius:14px; max-width:380px; width:100%;
+    padding:18px; animation:rise .25s ease both;
+  }
+  .modal-head{display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;}
+  .modal-head strong{font-family:'Space Grotesk', sans-serif; font-size:1rem;}
+  .modal-close{background:none; border:none; color:var(--muted); font-size:1rem; cursor:pointer; padding:4px;}
+  .modal-body{font-size:.86rem; line-height:1.6; color:#c7d2db;}
+  .modal-body ol{margin:0; padding-left:20px;}
+  .modal-body li{margin-bottom:6px;}
+  .modal-body .step-icon{color:var(--amber); font-family:'JetBrains Mono', monospace;}
+
+  footer{text-align:center; margin-top:28px; font-size:.72rem; color:var(--muted-2); font-family:'JetBrains Mono', monospace;}
+
+  /* ---------- MOBILE ---------- */
+  @media (max-width:480px){
+    body{padding:18px 12px 44px;}
+    .ticket{padding:16px 16px; border-radius:12px;}
+    .ticket::before{width:70px;}
+    h1{font-size:1.28rem;}
+    p.sub{font-size:.82rem;}
+    .panel{padding:14px; border-radius:12px;}
+    .card{padding:15px; border-radius:12px;}
+    .sheet-head{flex-direction:column; align-items:flex-start; gap:6px;}
+    .sheet-head h2{font-size:1rem;}
+    .lote{font-size:.68rem;}
+    .fisico-grid{grid-template-columns:1fr 1fr; gap:8px;}
+    .fisico-item{padding:9px 10px;}
+    .total-line .val{font-size:1.05rem;}
+    .comp-vals{font-size:.76rem;}
+    footer{font-size:.64rem; line-height:1.5;}
+  }
+  @media (max-width:360px){
+    .fisico-grid{grid-template-columns:1fr;}
+    .fisico-item[style]{grid-column:auto;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="ticket">
+    <div class="eyebrow"><span class="dot"></span>Ficha de Produção · Batelada</div>
+    <button id="btnInstall" class="btn-install" title="Instalar aplicativo">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/></svg>
+      <span>Instalar app</span>
+    </button>
+    <h1>Calculadora de Produção</h1>
+    <p class="sub">Selecione o produto e o volume desejado. As proporções seguem a fórmula técnica base de 100&nbsp;L.</p>
+  </div>
+
+  <div class="panel">
+    <div class="field-row">
+      <div>
+        <label for="produto">📋 Produto</label>
+        <div class="select-wrap">
+          <select id="produto"></select>
+        </div>
+      </div>
+      <div>
+        <label for="litros">🧴 Volume (L)</label>
+        <input type="number" id="litros" placeholder="Ex: 250" min="0" step="any" value="100">
+      </div>
+    </div>
+  </div>
+
+  <div id="resultado">
+    <div class="empty">Selecione um produto para gerar a ficha de produção.</div>
+  </div>
+
+  <footer>FÓRMULAS BASE · 100 L — VALORES PROPORCIONAIS AO VOLUME INFORMADO</footer>
+</div>
+
+<div id="installModal" class="modal-overlay">
+  <div class="modal-box">
+    <div class="modal-head">
+      <strong id="modalTitle">Instalar aplicativo</strong>
+      <button id="modalClose" class="modal-close">✕</button>
+    </div>
+    <div id="modalBody" class="modal-body"></div>
+  </div>
+</div>
+
+<script>
+const produtos = {
+  "Alvejante Clorado (Hipoclorito de Sódio 12%)": [
+    {nome:"Hipoclorito de Sódio 12%", pct:99.00, funcao:"Ativo"},
+    {nome:"Carbonato de Sódio (Barrilha)", pct:1.00, funcao:"Estabilizante"}
+  ],
+  "Amaciante de Roupas - Tradicional": [
+    {nome:"Água", pct:96.50, funcao:"Veículo"},
+    {nome:"Cloreto de Dialquil Dimetil Amônio 45%", pct:3.00, funcao:"Ativo"},
+    {nome:"Conservante à base de Isotiazolinona", pct:0.10, funcao:"Conservante"},
+    {nome:"Essência", pct:0.30, funcao:"Perfume"},
+    {nome:"Corante Azul Amaciante (solução 1%)", pct:0.10, funcao:"Corante"}
+  ],
+  "Detergente Alcalino Clorado em Gel": [
+    {nome:"Água", pct:45.50, funcao:"Veículo Aquoso"},
+    {nome:"Hidróxido de Sódio 50%", pct:17.50, funcao:"Alcalinizante"},
+    {nome:"Hipoclorito de Sódio 12%", pct:30.00, funcao:"Ativo"},
+    {nome:"Amina Óxida Laurílica (LA30)", pct:3.50, funcao:"Tensoativo não iônico"},
+    {nome:"Amina Óxida Mirística (M30)", pct:3.50, funcao:"Tensoativo não iônico"}
+  ],
+  "Detergente Lava Roupas Alberto - Profissional": [
+    {nome:"Água", pct:81.50, funcao:"Veículo Aquoso"},
+    {nome:"Tinopal CBS", pct:0.10, funcao:"Branqueador Óptico"},
+    {nome:"HEDP", pct:0.80, funcao:"Sequestrante"},
+    {nome:"EDTA", pct:1.00, funcao:"Sequestrante"},
+    {nome:"Ácido Sulfônico", pct:3.00, funcao:"Tensoativo Aniônico"},
+    {nome:"Perfume", pct:0.10, funcao:"Fragrância"},
+    {nome:"Corante Azul", pct:0.05, funcao:"Corante"},
+    {nome:"Amina Óxida LA30", pct:3.00, funcao:"Tensoativo Aniônico"},
+    {nome:"Soda Líquida 50%", pct:1.70, funcao:"Neutralizante"},
+    {nome:"Lauril 27%", pct:3.00, funcao:"Tensoativo Aniônico"},
+    {nome:"Nonil Fenol Etoxilado 95", pct:5.00, funcao:"Emulsificante"},
+    {nome:"Nonil Fenol Etoxilado 60", pct:0.70, funcao:"Emulsificante"},
+    {nome:"Conservante Isotiazolinona", pct:0.05, funcao:"Conservante"},
+    {nome:"Butil Glicol", pct:5.00, funcao:"Solvente"}
+  ],
+  "Detergente Alvejante Oxigenado c/ Branqueador Óptico": [
+    {nome:"Água", pct:60.15, funcao:"Veículo Aquoso"},
+    {nome:"HEDP", pct:0.90, funcao:"Sequestrante"},
+    {nome:"Tinopal CBS", pct:0.10, funcao:"Branqueador Óptico"},
+    {nome:"Nonil Fenol Etoxilado 9 EO", pct:5.94, funcao:"Tensoativo não Iônico"},
+    {nome:"Perfume", pct:0.10, funcao:"Essência"},
+    {nome:"Peróxido de Hidrogênio 50%", pct:32.81, funcao:"Ativo"}
+  ],
+  "Neutralizante de Hipoclorito e Resíduos Alcalinos - Profissional": [
+    {nome:"Água", pct:70.00, funcao:"Veículo Aquoso"},
+    {nome:"Metabissulfito de Sódio (Grau Técnico/Alimentício)", pct:30.00, funcao:"Neutralizante"}
+  ],
+  "Reforçador Alcalino Advanced - Profissional": [
+    {nome:"Água", pct:51.30, funcao:"Veículo Aquoso"},
+    {nome:"EDTA", pct:0.35, funcao:"Sequestrante"},
+    {nome:"Soda Cáustica 50%", pct:43.60, funcao:"Ativo"},
+    {nome:"Gluconato de Sódio", pct:1.10, funcao:"Hidrótopo"},
+    {nome:"Potassa Cáustica", pct:2.20, funcao:"Alcalinizante"},
+    {nome:"Ácido Acrílico Neutralizado", pct:1.45, funcao:"Dispersante"}
+  ]
+};
+
+const infoProdutos = {
+  "Alvejante Clorado (Hipoclorito de Sódio 12%)": {
+    preparo: "Adicionar as matérias-primas conforme a sequência. Diluir o Carbonato de Sódio em água e adicionar lentamente, com agitação de lenta a moderada, no Hipoclorito de Sódio 12%.",
+    indicacoes: "Alvejamento, desinfecção e remoção de manchas em roupas profissionais. Indicado para hotelaria, hospitais e áreas comerciais, inclusive as que manipulam produtos de origem animal (frigoríficos).",
+    utilizacao: "Dosadores automáticos ou manual. Temperatura ambiente até 40°C. Dosagem de 5 a 15 mL por Kg de roupa seca, conforme grau de sujidade.",
+    fisico: {aspecto:"Líquido límpido", cor:"Amarelado", odor:"Característico", ph:"11,00 a 13,00 (puro)", densidade:"1,150 a 1,250 g/mL"}
+  },
+  "Amaciante de Roupas - Tradicional": {
+    preparo: "Adicionar a água e depois a base de amaciante, homogeneizando em velocidade moderada até formar a consistência de amaciante (não bater rápido, pode desandar). Diluir o corante a 1% em água antes de adicionar.",
+    indicacoes: "Propriedades anti-estáticas, remove eletricidade estática das fibras e deixa as peças macias. Facilita a remoção das roupas na máquina e melhora a sucção na centrífuga. Indicado para hotelaria, hospitais e indústrias alimentícias.",
+    utilizacao: "Aplicar após o último enxágue, de 5 a 10 mL por Kg de roupa seca. Nunca aplicar diretamente no tecido.",
+    fisico: {aspecto:"Líquido viscoso", cor:"Azul amaciante", odor:"Floral", ph:"3,00 a 5,00 (puro)", densidade:"0,940 a 1,000 g/mL"}
+  },
+  "Detergente Alcalino Clorado em Gel": {
+    preparo: "Adicionar as matérias-primas na sequência, com agitação de leve a moderada. Não agitar violentamente — o produto espuma bastante.",
+    indicacoes: "Desengordurante para indústria alimentícia e cozinha industrial: pisos, paredes, bancadas, máquinas e tanques inox. Uso em hotéis, motéis, restaurantes e hospitais.",
+    utilizacao: "Pré-enxágue com água morna (50°C), aplicar manual ou por espuma, agir 10 a 15 min e enxaguar. Concentração: manual 1 a 3% p/v; por espuma 3 a 7% p/v.",
+    fisico: {aspecto:"Líquido viscoso", cor:"Amarelado", odor:"Característico", ph:"11,00 a 13,00 (1%)", densidade:"1,100 a 1,300 g/mL"}
+  },
+  "Detergente Lava Roupas Alberto - Profissional": {
+    preparo: "Adicionar primeiro a água e depois as MPs na sequência, com agitação moderada. Dissolver o branqueador óptico e o corante em água separadamente antes de incorporar.",
+    indicacoes: "Sistemas automáticos de dosagem nas fases de Umectação, Pré-Lavagem e Lavagem. Indicado para hotelaria, hospitais e indústrias alimentícias.",
+    utilizacao: "Umectação: 1 a 3 mL/Kg (leve a pesada), 10 min, temp. ambiente. Pré-Lavagem: 4 a 7 mL/Kg, 10-15 min. Lavagem: 3 a 6 mL/Kg, 10-20 min.",
+    fisico: {aspecto:"Líquido límpido", cor:"Azul turquesa", odor:"Característico", ph:"07,00 a 08,00 (puro)", densidade:"1,000 a 1,020 g/mL"}
+  },
+  "Detergente Alvejante Oxigenado c/ Branqueador Óptico": {
+    preparo: "Adicionar as matérias-primas na sequência, com agitação de leve a moderada.",
+    indicacoes: "Detergente com ação alvejante para lavanderias profissionais: hotéis, motéis, pousadas e hospitais.",
+    utilizacao: "Dosar de 3 a 8 mL por Kg de roupa seca. Nível baixo de água, temperatura ambiente, 15 a 20 minutos.",
+    fisico: {aspecto:"Líquido límpido", cor:"Incolor a amarelado", odor:"Característico", ph:"02,00 a 04,00 (puro)", densidade:"1,040 a 1,080 g/mL"}
+  },
+  "Neutralizante de Hipoclorito e Resíduos Alcalinos - Profissional": {
+    preparo: "Adicionar as matérias-primas na sequência, com agitação de leve a moderada.",
+    indicacoes: "Neutralizante de alvejantes clorados e produtos alcalinos, usado via dosador eletrônico na fase final da lavagem em lavanderias hospitalares, comerciais, industriais e de hotelaria.",
+    utilizacao: "Dosar de 1 a 5 mL por Kg de roupa seca, no último enxágue, nível médio de água, associado a um amaciante. Temperatura: a frio. Tempo: 5 minutos.",
+    fisico: {aspecto:"Líquido límpido", cor:"Amarelado", odor:"Característico", ph:"3,00 a 5,00 (puro)", densidade:"1,150 a 1,200 g/mL"}
+  },
+  "Reforçador Alcalino Advanced - Profissional": {
+    preparo: "Adicionar as matérias-primas na sequência descrita.",
+    indicacoes: "Indicado para lavagem de roupas com sujidade pesada, usado em conjunto com detergente concentrado ou advanced. Hotelaria, hospitais e indústrias alimentícias.",
+    utilizacao: "Uso exclusivo em sistemas automáticos de dosagem. Dosar de 1 a 7 mL por Kg de roupa seca na umectação, pré-lavagem e lavagem.",
+    fisico: {aspecto:"Líquido límpido", cor:"Incolor", odor:"Característico", ph:"10,00 a 12,00 (puro)", densidade:"1,150 a 1,250 g/mL"}
+  }
+};
+
+const nomesProdutos = Object.keys(produtos);
+const selProduto = document.getElementById('produto');
+const inputLitros = document.getElementById('litros');
+const resultado = document.getElementById('resultado');
+
+nomesProdutos.forEach(nome => {
+  const opt = document.createElement('option');
+  opt.value = nome;
+  opt.textContent = nome;
+  selProduto.appendChild(opt);
+});
+
+function formatNum(n){
+  return n.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:3});
+}
+
+function loteCode(nome){
+  const idx = nomesProdutos.indexOf(nome) + 1;
+  return 'F-' + String(idx).padStart(2,'0');
+}
+
+function isVeiculo(funcao){
+  return /ve[ií]culo/i.test(funcao);
+}
+
+function calcular(){
+  const nomeProduto = selProduto.value;
+  const litros = parseFloat(inputLitros.value);
+  const componentes = produtos[nomeProduto];
+
+  if(!nomeProduto || isNaN(litros) || litros <= 0){
+    resultado.innerHTML = '<div class="empty">Informe um volume válido para gerar a ficha.</div>';
+    return;
+  }
+
+  let total = 0;
+  let rows = '';
+  componentes.forEach(c => {
+    const qtd = (c.pct/100) * litros;
+    total += qtd;
+    rows += `
+      <div class="comp-row">
+        <div class="comp-top">
+          <div>
+            <div class="comp-name">${c.nome}</div>
+            <div class="comp-fn">${c.funcao}</div>
+          </div>
+          <div class="comp-vals"><b>${formatNum(qtd)}</b> <span>Kg/L · ${c.pct.toFixed(2)}%</span></div>
+        </div>
+        <div class="bar-track"><div class="bar-fill ${isVeiculo(c.funcao) ? 'veiculo' : ''}" data-pct="${c.pct}"></div></div>
+      </div>`;
+  });
+
+  const info = infoProdutos[nomeProduto] || {};
+  const f = info.fisico || {};
+
+  resultado.innerHTML = `
+    <div class="card">
+      <div class="sheet-head">
+        <h2>${nomeProduto}</h2>
+        <span class="lote">LOTE ${loteCode(nomeProduto)} · ${litros} L</span>
+      </div>
+      ${rows}
+      <div class="total-line">
+        <span class="lbl">Volume Total</span>
+        <span class="val">${formatNum(total)} L</span>
+      </div>
+      <p class="base-note">Fórmula técnica proporcional a 100 L, calculada para ${litros} L.</p>
+      <button class="btn-whatsapp" id="btnWhats">
+        <svg viewBox="0 0 32 32" width="18" height="18" fill="currentColor"><path d="M16.004 3C9.373 3 4 8.373 4 15.004c0 2.548.795 4.913 2.15 6.86L4.5 29l7.31-1.921a11.94 11.94 0 0 0 4.194.76h.004c6.63 0 12.004-5.373 12.004-12.004C28.012 8.373 22.638 3 16.004 3zm0 21.8h-.003a9.77 9.77 0 0 1-4.978-1.364l-.357-.212-3.86 1.014 1.03-3.763-.232-.386a9.77 9.77 0 0 1-1.5-5.2c0-5.41 4.404-9.814 9.904-9.814 2.645 0 5.13 1.031 6.998 2.902a9.83 9.83 0 0 1 2.898 6.995c0 5.41-4.404 9.828-9.9 9.828zm5.42-7.354c-.297-.149-1.758-.868-2.03-.967-.272-.099-.47-.149-.669.15-.198.297-.767.966-.94 1.164-.173.198-.347.223-.644.075-.297-.15-1.253-.462-2.386-1.472-.882-.787-1.478-1.76-1.651-2.058-.173-.297-.019-.458.13-.606.134-.133.298-.347.446-.52.15-.174.198-.298.297-.496.099-.198.05-.372-.025-.52-.074-.15-.669-1.61-.916-2.205-.242-.58-.487-.501-.669-.51l-.57-.01a1.09 1.09 0 0 0-.792.372c-.272.297-1.04 1.016-1.04 2.478s1.065 2.874 1.213 3.072c.15.198 2.096 3.2 5.08 4.488.71.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.288.173-1.413-.074-.124-.272-.198-.57-.347z"/></svg>
+        <span>Compartilhar no WhatsApp</span>
+      </button>
+    </div>
+
+    <div class="card teal">
+      <h3><span class="icon-chip">🔬</span>Dados Físico-Químicos</h3>
+      <div class="fisico-grid">
+        <div class="fisico-item"><span class="fisico-label">Aspecto</span><span class="fisico-val">${f.aspecto || '—'}</span></div>
+        <div class="fisico-item"><span class="fisico-label">Cor</span><span class="fisico-val">${f.cor || '—'}</span></div>
+        <div class="fisico-item"><span class="fisico-label">Odor</span><span class="fisico-val">${f.odor || '—'}</span></div>
+        <div class="fisico-item"><span class="fisico-label">pH 25°C</span><span class="fisico-val">${f.ph || '—'}</span></div>
+        <div class="fisico-item" style="grid-column:span 2;"><span class="fisico-label">Densidade 25°C</span><span class="fisico-val">${f.densidade || '—'}</span></div>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="card">
+        <h3><span class="icon-chip">🧪</span>Modo de Preparo</h3>
+        <p class="body">${info.preparo || '—'}</p>
+      </div>
+      <div class="card">
+        <h3><span class="icon-chip">⚙️</span>Utilização</h3>
+        <p class="body">${info.utilizacao || '—'}</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3><span class="icon-chip">✅</span>Indicações</h3>
+      <p class="body">${info.indicacoes || '—'}</p>
+    </div>
+  `;
+
+  requestAnimationFrame(() => {
+    resultado.querySelectorAll('.bar-fill').forEach(el => {
+      const pct = parseFloat(el.dataset.pct);
+      requestAnimationFrame(() => { el.style.width = Math.min(pct,100) + '%'; });
+    });
+  });
+
+  const btnWhats = document.getElementById('btnWhats');
+  if(btnWhats){
+    btnWhats.addEventListener('click', () => compartilharWhatsApp(nomeProduto, litros, componentes, total, info.fisico));
+  }
+}
+
+function compartilharWhatsApp(nomeProduto, litros, componentes, total, fisico){
+  const linhas = componentes.map(c => {
+    const qtd = (c.pct/100) * litros;
+    return `• ${c.nome}: *${formatNum(qtd)}* Kg/L  (${c.pct.toFixed(2)}%)`;
+  }).join('\n');
+
+  const f = fisico || {};
+  const blocoFisico =
+`*Dados Físico-Químicos:*
+Aspecto: ${f.aspecto || '—'}
+Cor: ${f.cor || '—'}
+Odor: ${f.odor || '—'}
+pH 25°C: ${f.ph || '—'}
+Densidade 25°C: ${f.densidade || '—'}`;
+
+  const texto =
+`*FICHA DE PRODUÇÃO — ${loteCode(nomeProduto)}*
+🧴 *${nomeProduto}*
+Volume: *${litros} L*
+
+*Insumos:*
+${linhas}
+
+*Total:* ${formatNum(total)} L
+
+${blocoFisico}
+
+_Gerado pela Calculadora de Produção_`;
+
+  const url = 'https://wa.me/?text=' + encodeURIComponent(texto);
+  window.open(url, '_blank');
+}
+
+selProduto.addEventListener('change', calcular);
+inputLitros.addEventListener('input', calcular);
+
+selProduto.selectedIndex = 0;
+calcular();
+
+/* ---------- INSTALAR APP ---------- */
+let deferredPrompt = null;
+const btnInstall = document.getElementById('btnInstall');
+const installModal = document.getElementById('installModal');
+const modalBody = document.getElementById('modalBody');
+const modalClose = document.getElementById('modalClose');
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+});
+
+function getPlataforma(){
+  const ua = navigator.userAgent || navigator.vendor || window.opera;
+  const isIOS = /iPad|iPhone|iPod/.test(ua) && !window.MSStream;
+  const isAndroid = /Android/.test(ua);
+  return isIOS ? 'ios' : (isAndroid ? 'android' : 'desktop');
+}
+
+function abrirInstrucoes(){
+  const plataforma = getPlataforma();
+  let html = '';
+  if(plataforma === 'ios'){
+    html = `
+      <ol>
+        <li>Toque no ícone <span class="step-icon">Compartilhar ⬆️</span> na barra do Safari.</li>
+        <li>Selecione <strong>"Adicionar à Tela de Início"</strong>.</li>
+        <li>Toque em <strong>Adicionar</strong> no canto superior direito.</li>
+      </ol>`;
+  } else if(plataforma === 'android'){
+    html = `
+      <ol>
+        <li>Toque no menu <span class="step-icon">⋮</span> no canto superior direito do Chrome.</li>
+        <li>Selecione <strong>"Instalar aplicativo"</strong> ou <strong>"Adicionar à tela inicial"</strong>.</li>
+        <li>Confirme tocando em <strong>Instalar</strong>.</li>
+      </ol>`;
+  } else {
+    html = `
+      <ol>
+        <li>Clique no ícone de instalação <span class="step-icon">⬇️</span> na barra de endereço do navegador.</li>
+        <li>Ou abra o menu do navegador e escolha <strong>"Instalar app"</strong>.</li>
+      </ol>`;
+  }
+  modalBody.innerHTML = html;
+  installModal.classList.add('show');
+}
+
+btnInstall.addEventListener('click', async () => {
+  if(deferredPrompt){
+    deferredPrompt.prompt();
+    await deferredPrompt.userChoice;
+    deferredPrompt = null;
+  } else {
+    abrirInstrucoes();
+  }
+});
+
+modalClose.addEventListener('click', () => installModal.classList.remove('show'));
+installModal.addEventListener('click', (e) => {
+  if(e.target === installModal) installModal.classList.remove('show');
+});
+</script>
+</body>
+</html>
