@@ -558,9 +558,29 @@ const installModal = document.getElementById('installModal');
 const modalBody = document.getElementById('modalBody');
 const modalClose = document.getElementById('modalClose');
 
+function isStandalone(){
+  return window.matchMedia('(display-mode: standalone)').matches
+    || window.navigator.standalone === true; // iOS Safari
+}
+
+function esconderBotaoInstalar(){
+  if(btnInstall) btnInstall.style.display = 'none';
+}
+
+// Já instalado/aberto como app -> não mostra o botão
+if(isStandalone()){
+  esconderBotaoInstalar();
+}
+
 window.addEventListener('beforeinstallprompt', (e) => {
   e.preventDefault();
   deferredPrompt = e;
+});
+
+// Instalação concluída (Android/Chrome) -> esconde o botão
+window.addEventListener('appinstalled', () => {
+  deferredPrompt = null;
+  esconderBotaoInstalar();
 });
 
 function getPlataforma(){
@@ -601,8 +621,9 @@ function abrirInstrucoes(){
 btnInstall.addEventListener('click', async () => {
   if(deferredPrompt){
     deferredPrompt.prompt();
-    await deferredPrompt.userChoice;
+    const { outcome } = await deferredPrompt.userChoice;
     deferredPrompt = null;
+    if(outcome === 'accepted') esconderBotaoInstalar();
   } else {
     abrirInstrucoes();
   }
