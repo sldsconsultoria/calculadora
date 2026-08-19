@@ -413,6 +413,19 @@ function formatNum(n){
   return n.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:3});
 }
 
+// Quando a quantidade for menor que 1 Kg/L, converte para Gramas/ML (x1000)
+function formatValor(qtd){
+  if(Math.abs(qtd) < 1){
+    const gm = qtd * 1000;
+    return gm.toLocaleString('pt-BR', {minimumFractionDigits:0, maximumFractionDigits:2});
+  }
+  return formatNum(qtd);
+}
+
+function unidadeQtd(qtd){
+  return Math.abs(qtd) < 1 ? 'G/ML' : 'Kg/L';
+}
+
 function loteCode(nome){
   const idx = nomesProdutos.indexOf(nome) + 1;
   return 'F-' + String(idx).padStart(2,'0');
@@ -444,7 +457,7 @@ function calcular(){
             <div class="comp-name">${c.nome}</div>
             <div class="comp-fn">${c.funcao}</div>
           </div>
-          <div class="comp-vals"><b>${formatNum(qtd)}</b> <span>Kg/L · ${c.pct.toFixed(2)}%</span></div>
+          <div class="comp-vals"><b>${formatValor(qtd)}</b> <span>${unidadeQtd(qtd)} · ${c.pct.toFixed(2)}%</span></div>
         </div>
         <div class="bar-track"><div class="bar-fill ${isVeiculo(c.funcao) ? 'veiculo' : ''}" data-pct="${c.pct}"></div></div>
       </div>`;
@@ -462,7 +475,7 @@ function calcular(){
       ${rows}
       <div class="total-line">
         <span class="lbl">Volume Total</span>
-        <span class="val">${formatNum(total)} L</span>
+        <span class="val">${formatValor(total)} ${unidadeQtd(total)}</span>
       </div>
       <p class="base-note">Fórmula técnica proporcional a 100 L, calculada para ${litros} L.</p>
       <button class="btn-whatsapp" id="btnWhats">
@@ -515,7 +528,7 @@ function calcular(){
 function compartilharWhatsApp(nomeProduto, litros, componentes, total, fisico){
   const linhas = componentes.map(c => {
     const qtd = (c.pct/100) * litros;
-    return `• ${c.nome}: *${formatNum(qtd)}* Kg/L  (${c.pct.toFixed(2)}%)`;
+    return `• ${c.nome}: *${formatValor(qtd)}* ${unidadeQtd(qtd)}  (${c.pct.toFixed(2)}%)`;
   }).join('\n');
 
   const f = fisico || {};
@@ -535,7 +548,7 @@ Volume: *${litros} L*
 *Insumos:*
 ${linhas}
 
-*Total:* ${formatNum(total)} L
+*Total:* ${formatValor(total)} ${unidadeQtd(total)}
 
 ${blocoFisico}
 
