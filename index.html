@@ -315,7 +315,7 @@ const produtos = {
     {nome:"Amina Óxida Mirística (M30)", pct:3.50, funcao:"Tensoativo não iônico", estado:"liquido"}
   ],
   "Detergente Lava Roupas Alberto - Profissional": [
-    {nome:"Água", pct:81.50, funcao:"Veículo Aquoso", estado:"liquido"},
+    {nome:"Água", pct:81.50, funcao:"Veículo Aquoso", estado:"liquido", ajustavel:true},
     {nome:"Tinopal CBS", pct:0.10, funcao:"Branqueador Óptico", estado:"liquido"},
     {nome:"HEDP", pct:0.80, funcao:"Sequestrante", estado:"liquido"},
     {nome:"EDTA", pct:1.00, funcao:"Sequestrante", estado:"liquido"},
@@ -455,10 +455,18 @@ function calcular(){
     return;
   }
 
+  // Se houver um componente "ajustável" (ex: Água), ele absorve a diferença
+  // para que o total feche exatamente no volume informado, em vez de
+  // simplesmente somar todas as porcentagens (que podem passar de 100%).
+  const somaOutrosPct = componentes.reduce((s,c) => c.ajustavel ? s : s + c.pct, 0);
+  const qtdOutros = (somaOutrosPct/100) * litros;
+  const qtdAjustavel = litros - qtdOutros;
+
   let total = 0;
   let rows = '';
   componentes.forEach(c => {
-    const qtd = (c.pct/100) * litros;
+    const qtd = c.ajustavel ? qtdAjustavel : (c.pct/100) * litros;
+    const pctExibido = c.ajustavel ? (litros > 0 ? (qtd/litros)*100 : 0) : c.pct;
     total += qtd;
     rows += `
       <div class="comp-row">
@@ -467,9 +475,9 @@ function calcular(){
             <div class="comp-name">${c.nome}</div>
             <div class="comp-fn">${c.funcao}</div>
           </div>
-          <div class="comp-vals"><b>${formatValor(qtd)}</b> <span>${unidadeQtd(qtd, c.estado)} · ${c.pct.toFixed(2)}%</span></div>
+          <div class="comp-vals"><b>${formatValor(qtd)}</b> <span>${unidadeQtd(qtd, c.estado)} · ${pctExibido.toFixed(2)}%</span></div>
         </div>
-        <div class="bar-track"><div class="bar-fill ${isVeiculo(c.funcao) ? 'veiculo' : ''}" data-pct="${c.pct}"></div></div>
+        <div class="bar-track"><div class="bar-fill ${isVeiculo(c.funcao) ? 'veiculo' : ''}" data-pct="${pctExibido}"></div></div>
       </div>`;
   });
 
@@ -536,9 +544,14 @@ function calcular(){
 }
 
 function compartilharWhatsApp(nomeProduto, litros, componentes, total, fisico){
+  const somaOutrosPct = componentes.reduce((s,c) => c.ajustavel ? s : s + c.pct, 0);
+  const qtdOutros = (somaOutrosPct/100) * litros;
+  const qtdAjustavel = litros - qtdOutros;
+
   const linhas = componentes.map(c => {
-    const qtd = (c.pct/100) * litros;
-    return `• ${c.nome}: *${formatValor(qtd)}* ${unidadeQtd(qtd, c.estado)}  (${c.pct.toFixed(2)}%)`;
+    const qtd = c.ajustavel ? qtdAjustavel : (c.pct/100) * litros;
+    const pctExibido = c.ajustavel ? (litros > 0 ? (qtd/litros)*100 : 0) : c.pct;
+    return `• ${c.nome}: *${formatValor(qtd)}* ${unidadeQtd(qtd, c.estado)}  (${pctExibido.toFixed(2)}%)`;
   }).join('\n');
 
   const f = fisico || {};
