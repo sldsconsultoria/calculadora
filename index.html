@@ -297,58 +297,58 @@
 <script>
 const produtos = {
   "Alvejante Clorado (Hipoclorito de Sódio 12%)": [
-    {nome:"Hipoclorito de Sódio 12%", pct:99.00, funcao:"Ativo"},
-    {nome:"Carbonato de Sódio (Barrilha)", pct:1.00, funcao:"Estabilizante"}
+    {nome:"Hipoclorito de Sódio 12%", pct:99.00, funcao:"Ativo", estado:"liquido"},
+    {nome:"Carbonato de Sódio (Barrilha)", pct:1.00, funcao:"Estabilizante", estado:"solido"}
   ],
   "Amaciante de Roupas - Tradicional": [
-    {nome:"Água", pct:96.50, funcao:"Veículo"},
-    {nome:"Cloreto de Dialquil Dimetil Amônio 45%", pct:3.00, funcao:"Ativo"},
-    {nome:"Conservante à base de Isotiazolinona", pct:0.10, funcao:"Conservante"},
-    {nome:"Essência", pct:0.30, funcao:"Perfume"},
-    {nome:"Corante Azul Amaciante (solução 1%)", pct:0.10, funcao:"Corante"}
+    {nome:"Água", pct:96.50, funcao:"Veículo", estado:"liquido"},
+    {nome:"Cloreto de Dialquil Dimetil Amônio 45%", pct:3.00, funcao:"Ativo", estado:"liquido"},
+    {nome:"Conservante à base de Isotiazolinona", pct:0.10, funcao:"Conservante", estado:"liquido"},
+    {nome:"Essência", pct:0.30, funcao:"Perfume", estado:"liquido"},
+    {nome:"Corante Azul Amaciante (solução 1%)", pct:0.10, funcao:"Corante", estado:"liquido"}
   ],
   "Detergente Alcalino Clorado em Gel": [
-    {nome:"Água", pct:45.50, funcao:"Veículo Aquoso"},
-    {nome:"Hidróxido de Sódio 50%", pct:17.50, funcao:"Alcalinizante"},
-    {nome:"Hipoclorito de Sódio 12%", pct:30.00, funcao:"Ativo"},
-    {nome:"Amina Óxida Laurílica (LA30)", pct:3.50, funcao:"Tensoativo não iônico"},
-    {nome:"Amina Óxida Mirística (M30)", pct:3.50, funcao:"Tensoativo não iônico"}
+    {nome:"Água", pct:45.50, funcao:"Veículo Aquoso", estado:"liquido"},
+    {nome:"Hidróxido de Sódio 50%", pct:17.50, funcao:"Alcalinizante", estado:"liquido"},
+    {nome:"Hipoclorito de Sódio 12%", pct:30.00, funcao:"Ativo", estado:"liquido"},
+    {nome:"Amina Óxida Laurílica (LA30)", pct:3.50, funcao:"Tensoativo não iônico", estado:"liquido"},
+    {nome:"Amina Óxida Mirística (M30)", pct:3.50, funcao:"Tensoativo não iônico", estado:"liquido"}
   ],
   "Detergente Lava Roupas Alberto - Profissional": [
-    {nome:"Água", pct:81.50, funcao:"Veículo Aquoso"},
-    {nome:"Tinopal CBS", pct:0.10, funcao:"Branqueador Óptico"},
-    {nome:"HEDP", pct:0.80, funcao:"Sequestrante"},
-    {nome:"EDTA", pct:1.00, funcao:"Sequestrante"},
-    {nome:"Ácido Sulfônico", pct:3.00, funcao:"Tensoativo Aniônico"},
-    {nome:"Perfume", pct:0.10, funcao:"Fragrância"},
-    {nome:"Corante Azul", pct:0.05, funcao:"Corante"},
-    {nome:"Amina Óxida LA30", pct:3.00, funcao:"Tensoativo Aniônico"},
-    {nome:"Soda Líquida 50%", pct:1.70, funcao:"Neutralizante"},
-    {nome:"Lauril 27%", pct:3.00, funcao:"Tensoativo Aniônico"},
-    {nome:"Nonil Fenol Etoxilado 95", pct:5.00, funcao:"Emulsificante"},
-    {nome:"Nonil Fenol Etoxilado 60", pct:0.70, funcao:"Emulsificante"},
-    {nome:"Conservante Isotiazolinona", pct:0.05, funcao:"Conservante"},
-    {nome:"Butil Glicol", pct:5.00, funcao:"Solvente"}
+    {nome:"Água", pct:81.50, funcao:"Veículo Aquoso", estado:"liquido"},
+    {nome:"Tinopal CBS", pct:0.10, funcao:"Branqueador Óptico", estado:"liquido"},
+    {nome:"HEDP", pct:0.80, funcao:"Sequestrante", estado:"liquido"},
+    {nome:"EDTA", pct:1.00, funcao:"Sequestrante", estado:"liquido"},
+    {nome:"Ácido Sulfônico", pct:3.00, funcao:"Tensoativo Aniônico", estado:"liquido"},
+    {nome:"Perfume", pct:0.10, funcao:"Fragrância", estado:"liquido"},
+    {nome:"Corante Azul", pct:0.01, funcao:"Corante", estado:"liquido"},
+    {nome:"Amina Óxida LA30", pct:3.00, funcao:"Tensoativo Aniônico", estado:"liquido"},
+    {nome:"Soda Líquida 50%", pct:1.70, funcao:"Neutralizante", estado:"liquido"},
+    {nome:"Lauril 27%", pct:3.00, funcao:"Tensoativo Aniônico", estado:"liquido"},
+    {nome:"Nonil Fenol Etoxilado 95", pct:5.00, funcao:"Emulsificante", estado:"liquido"},
+    {nome:"Nonil Fenol Etoxilado 60", pct:0.70, funcao:"Emulsificante", estado:"liquido"},
+    {nome:"Conservante Isotiazolinona", pct:0.05, funcao:"Conservante", estado:"liquido"},
+    {nome:"Butil Glicol", pct:5.00, funcao:"Solvente", estado:"liquido"}
   ],
   "Detergente Alvejante Oxigenado c/ Branqueador Óptico": [
-    {nome:"Água", pct:60.15, funcao:"Veículo Aquoso"},
-    {nome:"HEDP", pct:0.90, funcao:"Sequestrante"},
-    {nome:"Tinopal CBS", pct:0.10, funcao:"Branqueador Óptico"},
-    {nome:"Nonil Fenol Etoxilado 9 EO", pct:5.94, funcao:"Tensoativo não Iônico"},
-    {nome:"Perfume", pct:0.10, funcao:"Essência"},
-    {nome:"Peróxido de Hidrogênio 50%", pct:32.81, funcao:"Ativo"}
+    {nome:"Água", pct:60.15, funcao:"Veículo Aquoso", estado:"liquido"},
+    {nome:"HEDP", pct:0.90, funcao:"Sequestrante", estado:"liquido"},
+    {nome:"Tinopal CBS", pct:0.10, funcao:"Branqueador Óptico", estado:"liquido"},
+    {nome:"Nonil Fenol Etoxilado 9 EO", pct:5.94, funcao:"Tensoativo não Iônico", estado:"liquido"},
+    {nome:"Perfume", pct:0.10, funcao:"Essência", estado:"liquido"},
+    {nome:"Peróxido de Hidrogênio 50%", pct:32.81, funcao:"Ativo", estado:"liquido"}
   ],
   "Neutralizante de Hipoclorito e Resíduos Alcalinos - Profissional": [
-    {nome:"Água", pct:70.00, funcao:"Veículo Aquoso"},
-    {nome:"Metabissulfito de Sódio (Grau Técnico/Alimentício)", pct:30.00, funcao:"Neutralizante"}
+    {nome:"Água", pct:70.00, funcao:"Veículo Aquoso", estado:"liquido"},
+    {nome:"Metabissulfito de Sódio (Grau Técnico/Alimentício)", pct:30.00, funcao:"Neutralizante", estado:"solido"}
   ],
   "Reforçador Alcalino Advanced - Profissional": [
-    {nome:"Água", pct:51.30, funcao:"Veículo Aquoso"},
-    {nome:"EDTA", pct:0.35, funcao:"Sequestrante"},
-    {nome:"Soda Cáustica 50%", pct:43.60, funcao:"Ativo"},
-    {nome:"Gluconato de Sódio", pct:1.10, funcao:"Hidrótopo"},
-    {nome:"Potassa Cáustica", pct:2.20, funcao:"Alcalinizante"},
-    {nome:"Ácido Acrílico Neutralizado", pct:1.45, funcao:"Dispersante"}
+    {nome:"Água", pct:51.30, funcao:"Veículo Aquoso", estado:"liquido"},
+    {nome:"EDTA", pct:0.35, funcao:"Sequestrante", estado:"liquido"},
+    {nome:"Soda Cáustica 50%", pct:43.60, funcao:"Ativo", estado:"liquido"},
+    {nome:"Gluconato de Sódio", pct:1.10, funcao:"Hidrótopo", estado:"solido"},
+    {nome:"Potassa Cáustica", pct:2.20, funcao:"Alcalinizante", estado:"liquido"},
+    {nome:"Ácido Acrílico Neutralizado", pct:1.45, funcao:"Dispersante", estado:"liquido"}
   ]
 };
 
@@ -422,7 +422,17 @@ function formatValor(qtd){
   return formatNum(qtd);
 }
 
-function unidadeQtd(qtd){
+// estado: 'solido' -> Kg/G · 'liquido' (padrão) -> L/ML
+function unidadeQtd(qtd, estado){
+  const isSolido = estado === 'solido';
+  if(Math.abs(qtd) < 1){
+    return isSolido ? 'G' : 'ML';
+  }
+  return isSolido ? 'Kg' : 'L';
+}
+
+// Total mistura sólidos e líquidos, então mantém rótulo genérico
+function unidadeTotal(qtd){
   return Math.abs(qtd) < 1 ? 'G/ML' : 'Kg/L';
 }
 
@@ -457,7 +467,7 @@ function calcular(){
             <div class="comp-name">${c.nome}</div>
             <div class="comp-fn">${c.funcao}</div>
           </div>
-          <div class="comp-vals"><b>${formatValor(qtd)}</b> <span>${unidadeQtd(qtd)} · ${c.pct.toFixed(2)}%</span></div>
+          <div class="comp-vals"><b>${formatValor(qtd)}</b> <span>${unidadeQtd(qtd, c.estado)} · ${c.pct.toFixed(2)}%</span></div>
         </div>
         <div class="bar-track"><div class="bar-fill ${isVeiculo(c.funcao) ? 'veiculo' : ''}" data-pct="${c.pct}"></div></div>
       </div>`;
@@ -475,7 +485,7 @@ function calcular(){
       ${rows}
       <div class="total-line">
         <span class="lbl">Volume Total</span>
-        <span class="val">${formatValor(total)} ${unidadeQtd(total)}</span>
+        <span class="val">${formatValor(total)} ${unidadeTotal(total)}</span>
       </div>
       <p class="base-note">Fórmula técnica proporcional a 100 L, calculada para ${litros} L.</p>
       <button class="btn-whatsapp" id="btnWhats">
@@ -528,7 +538,7 @@ function calcular(){
 function compartilharWhatsApp(nomeProduto, litros, componentes, total, fisico){
   const linhas = componentes.map(c => {
     const qtd = (c.pct/100) * litros;
-    return `• ${c.nome}: *${formatValor(qtd)}* ${unidadeQtd(qtd)}  (${c.pct.toFixed(2)}%)`;
+    return `• ${c.nome}: *${formatValor(qtd)}* ${unidadeQtd(qtd, c.estado)}  (${c.pct.toFixed(2)}%)`;
   }).join('\n');
 
   const f = fisico || {};
@@ -548,7 +558,7 @@ Volume: *${litros} L*
 *Insumos:*
 ${linhas}
 
-*Total:* ${formatValor(total)} ${unidadeQtd(total)}
+*Total:* ${formatValor(total)} ${unidadeTotal(total)}
 
 ${blocoFisico}
 
